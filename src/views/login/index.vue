@@ -56,7 +56,19 @@ export default {
         data: { mobile: this.user.mobile, code: this.user.code }
       }).then(res => {
         console.log(res.data)
-      }).catch(err => console.log(err))
+        // 成功提示消息
+        this.$message({
+          message: '登录成功',
+          type: 'success'
+        })
+        this.loginLoading = false
+      }).catch(err => {
+        console.log(err)
+        // 错误提示消息
+        this.$message.error('登录失败')
+        // 关闭 loading
+        this.loginLoading = false
+      })
     }
   },
   computed: { },
