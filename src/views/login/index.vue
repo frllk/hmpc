@@ -40,7 +40,7 @@ export default {
         mobile: '13911111111',
         code: '246810'
       },
-      checked: false,
+      checked: true,
       loginLoading: false // 登陆按钮上的loading。 如果它为true，则会转圈圈
     }
   },
