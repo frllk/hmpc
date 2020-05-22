@@ -6,23 +6,23 @@
         <div class="logo"></div>
       </div>
       <!-- 表单部分 -->
-      <el-form class="login-form" ref="form">
-        <el-form-item>
+      <el-form class="login-form" :model="user" ref="form" :rules='rules'>
+        <el-form-item prop='mobile'>
           <!-- 手机号 -->
           <el-input v-model.trim="user.mobile" placeholder="请输入手机号"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop='code'>
           <!-- 验证号 -->
           <el-input v-model.trim="user.code" placeholder="请输入验证号"></el-input>
         </el-form-item>
 
-        <el-form-item>
-          <el-checkbox v-model="checked" >我已阅读并同意用户协议和隐私条款</el-checkbox>
+        <el-form-item prop='agree'>
+          <el-checkbox v-model="user.agree" >我已阅读并同意用户协议和隐私条款</el-checkbox>
         </el-form-item>
 
         <el-form-item>
           <!-- 按钮上有一个loading属性 -->
-          <el-button :loading="loginLoading" @click="hLogin" class="login-btn" type="primary">登陆</el-button>
+          <el-button :loading="loginLoading" @click="onSubmit" class="login-btn" type="primary">登陆</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -36,19 +36,40 @@ export default {
   props: { },
   data () {
     return {
+      rules: {
+        mobile: [
+          { required: true, message: '请输入手机号', trigger: 'change' },
+          { pattern: /^1[35789]\d{9}$/, message: '手机号格式不对', trigger: 'change' }
+        ],
+        code: [
+          { required: true, message: '请输入验证码', trigger: 'change' },
+          { pattern: /^\d{6}$/, message: '验证码格式不对', trigger: 'change' }
+        ],
+        agree: [
+          {
+            validator: (rule, value, callback) => {
+              if (value) callback()
+              else callback(new Error('请同意用户协议'))
+            }
+          }
+        ]
+      },
       user: {
         mobile: '13911111111',
-        code: '246810'
+        code: '246810',
+        agree: true
       },
-      checked: true,
       loginLoading: false // 登陆按钮上的loading。 如果它为true，则会转圈圈
     }
   },
   methods: {
+    onSubmit () {
+      this.$refs.form.validate(valid => {
+        console.log('检验结果', valid)
+        if (valid) this.hLogin()
+      })
+    },
     hLogin () {
-      if (this.user.mobile === '') return
-      if (this.user.code === '') return
-      if (this.checked === false) return
       this.loginLoading = true
       ajax({
         method: 'post',
