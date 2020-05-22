@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import ajax from '../../utils/request'
+import { userLogin } from '../../api/user'
 export default {
   name: 'MyComponent',
   props: { },
@@ -71,11 +71,7 @@ export default {
     },
     hLogin () {
       this.loginLoading = true
-      ajax({
-        method: 'post',
-        url: '/mp/v1_0/authorizations',
-        data: { mobile: this.user.mobile, code: this.user.code }
-      }).then(res => {
+      userLogin({ mobile: this.user.mobile, code: this.user.code }, res => {
         console.log(res.data)
         // 成功提示消息
         this.$message({
@@ -83,7 +79,7 @@ export default {
           type: 'success'
         })
         this.loginLoading = false
-      }).catch(err => {
+      }, err => {
         console.log(err)
         // 错误提示消息
         this.$message.error('登录失败')
