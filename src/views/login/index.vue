@@ -33,7 +33,7 @@
 import { userLogin } from '../../api/user'
 import { setUser } from '../../utils/storage'
 export default {
-  name: 'MyComponent',
+  name: 'Login',
   props: { },
   data () {
     return {

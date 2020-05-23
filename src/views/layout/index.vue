@@ -3,6 +3,7 @@
     <el-aside class="aside" :width="isCollapse ? '64px': '200px'">
       <div :class='{minLogo:isCollapse}' class="logo"></div>
       <el-menu
+        router
         default-active="2"
         class="nav-menu"
         background-color="#002033"
@@ -65,7 +66,10 @@
             </el-dropdown-menu>
           </el-dropdown>
       </el-header>
-      <el-main class="main">Main</el-main>
+      <el-main class="main">
+        <!-- 二级路由入口 -->
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -88,7 +92,11 @@ export default {
       getUserProfile().then(res => {
         this.user = res.data.data
       }).catch(err => {
-        console.log(err)
+        console.dir(err)
+        // 401 UNAUTHORIZED 未授权
+        if (err.response.status === 401) {
+          this.$router.push('/login')
+        }
       })
     },
     hQuit () {
