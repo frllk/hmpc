@@ -31,6 +31,7 @@
 
 <script>
 import { userLogin } from '../../api/user'
+import { setUser } from '../../utils/storage'
 export default {
   name: 'MyComponent',
   props: { },
@@ -72,15 +73,17 @@ export default {
     hLogin () {
       this.loginLoading = true
       userLogin({ mobile: this.user.mobile, code: this.user.code }, res => {
-        console.log(res.data)
+        // console.log(res.data)
         // 成功提示消息
         this.$message({
           message: '登录成功',
           type: 'success'
         })
         this.loginLoading = false
+        setUser(res.data.data)
+        this.$router.push('/')
       }, err => {
-        console.log(err)
+        console.dir(err)
         // 错误提示消息
         this.$message.error('登录失败')
         // 关闭 loading

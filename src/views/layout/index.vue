@@ -50,14 +50,18 @@
           <el-dropdown>
             <!-- 默认插槽：用来显示触发开关 -->
             <div class="avatar-wrap">
-              <img class="avatar" src="http://toutiao.meiduo.site/FrvifflobfNNRM9V_ZBTI2ZaTH4n" alt="">
-              <span>用户昵称</span>
+              <img class="avatar" :src="user.photo" alt="">
+              <span>{{user.name}}</span>
               <i class="el-icon-arrow-down el-icon--right"></i>
             </div>
             <!--具名插槽：用来显示下拉内容 -->
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>设置</el-dropdown-item>
-              <el-dropdown-item divided>退出</el-dropdown-item>
+              <!-- 不是所有的组件都支持@click，如果某个组件加@click不管用，则加一个.native
+              native：原生的
+              .native：修饰符的作用是把事件添加到原生的dom上
+               -->
+              <el-dropdown-item @click.native="hQuit" divided>退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
       </el-header>
@@ -67,17 +71,43 @@
 </template>
 
 <script>
+import { getUserProfile } from '../../api/user'
+import { delUser } from '../../utils/storage'
 export default {
-  name: 'MyComponent',
+  name: 'Layout',
   props: { },
   data () {
     return {
+      user: {},
       isCollapse: false // 默认展开状态（不折叠）
     }
   },
-  methods: { },
+  methods: {
+    // 设置用户信息
+    setUserProfile () {
+      getUserProfile().then(res => {
+        this.user = res.data.data
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    hQuit () {
+      this.$confirm('你确定要退出吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        delUser()
+        this.$router.push('/login')
+      }).catch(() => {
+        // 用户取消了
+      })
+    }
+  },
   computed: { },
-  created () { },
+  created () {
+    this.setUserProfile()
+  },
   mounted () { }
 }
 </script>
