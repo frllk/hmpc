@@ -5,6 +5,7 @@ import Layout from '../views/layout'
 import { getUser } from '../utils/storage'
 import Articles from '../views/articles/index.vue'
 import AddArticle from '../views/articles/add.vue'
+import NotFound from '../views/page404'
 
 Vue.use(VueRouter)
 
@@ -17,7 +18,8 @@ const routes = [
       { path: '/addArticle', component: AddArticle }
     ]
   },
-  { path: '/login', component: Login }
+  { path: '/login', component: Login },
+  { path: '*', component: NotFound }
 ]
 
 const router = new VueRouter({
@@ -40,13 +42,13 @@ router.beforeEach((to, from, next) => {
       // 有就放行
       next()
     } else {
-      console.log('路由导航守卫：你没有登录，请回去！')
+      // console.log('路由导航守卫：你没有登录，请回去！')
       // 没有就回去登录
       next('/login')
     }
   } else {
     // 如果不是去主页，直接放行
-    console.log('如果不是去主页，直接放行')
+    // console.log('如果不是去主页，直接放行')
     next()
   }
 })

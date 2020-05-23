@@ -22,7 +22,7 @@ instance.interceptors.request.use((config) => {
   // Do something before request is sent
   // console.log(config)
   const userInfo = getUser()
-  console.log(userInfo)
+  // console.log(userInfo)
   if (userInfo && userInfo.token) {
     config.headers.Authorization = `Bearer ${userInfo.token}`
   }
