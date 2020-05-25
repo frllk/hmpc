@@ -10,19 +10,20 @@
       </div>
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="状态">
-          <el-radio-group v-model="form.resource">
-            <el-radio label="全部"></el-radio>
-            <el-radio label="草稿"></el-radio>
-            <el-radio label="待审核"></el-radio>
-            <el-radio label="审核通过"></el-radio>
-            <el-radio label="审核失败"></el-radio>
-            <el-radio label="已删除"></el-radio>
+          <!-- 0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除 -->
+          <el-radio-group v-model="form.status">
+            <el-radio label="">全部</el-radio>
+            <el-radio label="0">草稿</el-radio>
+            <el-radio label="1">待审核</el-radio>
+            <el-radio label="2">审核通过</el-radio>
+            <el-radio label="3">审核失败</el-radio>
+            <el-radio label="4">已删除</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道">
-          <el-select v-model="form.region" placeholder="请选择频道">
-            <el-option label="频道一" value="shanghai"></el-option>
-            <el-option label="频道二" value="beijing"></el-option>
+          <el-select v-model="form.channel_id" placeholder="请选择频道">
+            <el-option v-for="item in channels" :label="item.name" :value="item.id" :key="item.id"></el-option>
+            <!-- <el-option label="频道二" value="beijing"></el-option> -->
           </el-select>
         </el-form-item>
         <el-form-item label="日期">
@@ -112,36 +113,48 @@
 </template>
 
 <script>
-import { getArticles, delArticle } from '../../api/artilce'
+import { getArticles, delArticle, getChannels } from '../../api/artilce'
 export default {
   name: 'ArticleIndex',
   props: { },
   data () {
     return {
       form: {
-        name: '',
-        region: '',
+        channel_id: '',
         date: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        status: ''
       },
       articles: [], // 文章
+      channels: [],
       total_count: 0,
       currPage: 1
     }
   },
   methods: {
     hQuery () {
-      console.log('hQuery!')
+      this.loadArticles()
     },
     loadArticles () {
-      getArticles({ page: this.currPage }).then(res => {
+      const query = { page: this.currPage }
+      if (this.form.status !== '') {
+        query.status = this.form.status
+      }
+      if (this.form.channel_id > 0) {
+        query.channel_id = this.form.channel_id
+      }
+      getArticles(query).then(res => {
         // console.log('获取文章列表：', res.data)
         this.articles = res.data.data.results
         this.total_count = res.data.data.total_count
       }).catch(err => console.log(err))
+    },
+    loadChannels () {
+      getChannels().then(res => {
+        console.log(res.data.data.channels)
+        this.channels = res.data.data.channels
+      }).catch(err => {
+        console.log(err)
+      })
     },
     hPageChange (currPage) {
       // console.log(currPage)
@@ -182,6 +195,7 @@ export default {
   computed: { },
   created () {
     this.loadArticles()
+    this.loadChannels()
   },
   mounted () { }
 }

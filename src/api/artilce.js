@@ -13,10 +13,17 @@ export const getArticles = (queryObj) => {
     params: queryObj
   })
 }
-
+// 删除文章
 export const delArticle = target => {
   return ajax({
     method: 'delete',
     url: '/mp/v1_0/articles/' + target
+  })
+}
+// 获取文章频道
+export const getChannels = () => {
+  return ajax({
+    method: 'get',
+    url: '/mp/v1_0/channels'
   })
 }
