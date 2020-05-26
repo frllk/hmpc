@@ -4,11 +4,24 @@
 // 创建axios的实例
 // 可以写自己的配置项  http://www.axios-js.com/docs/#axios-create-config
 import axios from 'axios'
+import JSONbig from 'json-bigint'
 
 import { getUser } from './storage'
 
 const instance = axios.create({
-  baseURL: 'http://api-toutiao-web.itheima.net/' // 'https://some-domain.com/api/'
+  // baseURL: 'http://api-toutiao-web.itheima.net/'
+  baseURL: 'http://ttapi.research.itcast.cn/',
+
+  transformResponse: [function (data) {
+    // 对 data 进行任意转换处理
+    try {
+      // 如果没有遇到错误，就返回 JSONbig处理之后的数据
+      return JSONbig.parse(data)
+    } catch (err) {
+      console.log('JSONbig转换出错', err)
+      return data
+    }
+  }]
   // timeout: 1000,
   // headers: {'X-Custom-Header': 'foobar'}
 })

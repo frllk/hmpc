@@ -1,14 +1,16 @@
 <template>
-  <div class=''>编辑文章</div>
+  <my-breadcrumb>编辑文章</my-breadcrumb>
 </template>
 
 <script>
+import MyBreadcrumb from '../../components/MyBreadcrumb'
 export default {
   name: 'EditArticle',
   props: { },
   data () {
     return { }
   },
+  components: { MyBreadcrumb },
   methods: { },
   computed: { },
   created () { },

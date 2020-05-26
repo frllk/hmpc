@@ -1,11 +1,15 @@
 <template>
-  <div class=''>AddArticle</div>
+  <div class=''>
+    <my-breadcrumb>发布文章</my-breadcrumb>
+  </div>
 </template>
 
 <script>
+import MyBreadcrumb from '../../components/MyBreadcrumb'
 export default {
   name: 'AddArticle',
   props: { },
+  components: { MyBreadcrumb },
   data () {
     return { }
   },
