@@ -17,3 +17,25 @@ export const getImages = (paramsObj) => {
     params: paramsObj
   })
 }
+/**
+ * 修改素材状态
+ * @param {*} id id
+ * @param {*} data 修改状态 collect：是否收藏，false-取消收藏，true-添加收藏
+ */
+export const editImage = (id, data) => {
+  return ajax({
+    method: 'PUT',
+    url: '/mp/v1_0/user/images/' + id,
+    data
+  })
+}
+/**
+ * 删除文章
+ * @param {*} id id
+ */
+export const delImage = id => {
+  return ajax({
+    method: 'DELETE',
+    url: '/mp/v1_0/user/images/' + id
+  })
+}
