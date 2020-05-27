@@ -10,7 +10,39 @@
           <el-radio-button :label="false">全部</el-radio-button>
           <el-radio-button :label="true">收藏</el-radio-button>
         </el-radio-group>
+        <el-button @click="dialogVisible = true" style="float: right" size="mini" type="success">上传图片素材</el-button>
       </div>
+      <!-- 弹出框
+      append-to-body：Dialog 自身是否插入至 body 元素上。嵌套的 Dialog 必须指定该属性并赋值为 true
+       -->
+      <el-dialog
+        title="提示"
+        :append-to-body="true"
+        :visible.sync="dialogVisible">
+        <!-- el-upload：
+        action： 必选参数，上传的地址
+        headers： 设置上传的请求头部
+        name： 上传的文件字段名
+        show-file-list： 是否显示已上传文件列表
+        on-success: 文件上传成功时的钩子
+        before-upload: 上传文件之前的钩子，参数为上传的文件，
+        若返回 false 或者返回 Promise 且被 reject，则停止上传。
+         -->
+        <el-upload
+          class="avatar-uploader"
+          action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
+          name="image"
+          :headers="headers"
+          :show-file-list="false"
+          :on-success="hUploadSuccess"
+          :before-upload="beforeAvatarUpload">
+          <!-- el-image 组件： load 图片加载成功触发 -->
+          <el-image v-if="imageUrl" @load='hLoadImgOk' :src="imageUrl" class="avatar"></el-image>
+          <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+      </el-dialog>
+
       <!-- 素材列表 -->
       <el-row v-loading="loading" :gutter="10">
         <el-col v-for="item in images" :key="item.id" class="img_item" :xs="12" :sm="6" :md="6" :lg="4">
@@ -51,6 +83,7 @@
 import MyBreadcrumb from '@/components/MyBreadcrumb'
 import MyPagination from '@/components/MyPagination'
 import { getImages, editImage, delImage } from '@/api/image.js'
+import { getUser } from '@/utils/storage.js'
 export default {
   name: 'ImagesIndex',
   props: { },
@@ -62,6 +95,11 @@ export default {
       curr_page: 1,
       loading: false,
       total_count: 0,
+      dialogVisible: false, // 是否打开dialog
+      imageUrl: '', // 图片地址
+      headers: {
+        Authorization: `Bearer ${getUser().token}`
+      },
       collect: false // 是否收藏  true：已收藏  false：全部
     }
   },
@@ -100,7 +138,7 @@ export default {
       try {
         const res = await editImage(item.id, { collect: !item.is_collected })
         item.is_collected = res.data.data.collect
-        console.log(res)
+        // console.log(res)
       } catch (err) {
         console.log(err)
         this.$message.error('操作失败')
@@ -124,6 +162,34 @@ export default {
       }).catch(() => {
         this.$message.info('已取消删除')
       })
+    },
+    // 文件上传成功触发事件
+    hUploadSuccess (res) {
+      // console.log(res)
+      this.imageUrl = res.data.url
+      this.loadImages()
+    },
+    // 上传文件之前触发的事件
+    beforeAvatarUpload (file) {
+      const isJPG = file.type === 'image/jpeg' || 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
+    },
+    // 图片加载成功触发
+    hLoadImgOk () {
+      // 关闭对话框,并且重置 imageUrl
+      // 给2s时间给用户反应，2s后关闭弹窗
+      setTimeout(() => {
+        this.dialogVisible = false
+        this.imageUrl = ''
+      }, 2000)
     }
   },
   computed: { },
@@ -154,6 +220,11 @@ export default {
       cursor: pointer;
     }
   }
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
 .avatar-uploader {
     text-align: center;
 }
