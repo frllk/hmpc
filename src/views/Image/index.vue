@@ -45,14 +45,14 @@
 
       <!-- 素材列表 -->
       <el-row v-loading="loading" :gutter="10">
-        <el-col v-for="item in images" :key="item.id" class="img_item" :xs="12" :sm="6" :md="6" :lg="4">
+        <el-col v-for="(item,idx) in images" :key="item.id" class="img_item" :xs="12" :sm="6" :md="6" :lg="4">
           <el-image
             style="height: 180px;" :src="item.url"
             fit="cover"
           ></el-image>
           <div v-show="!collect" class="option">
             <span @click='hToggleCollect(item)' :style="{color: item.is_collected ? 'red' : '#fff'}" class="el-icon-star-off"></span>
-            <span @click="hDelImage(item.id)" class="el-icon-delete"></span>
+            <span @click="hDelImage(item.id,idx)" class="el-icon-delete"></span>
           </div>
         </el-col>
       </el-row>
@@ -136,7 +136,8 @@ export default {
     // 切换收藏状态
     async hToggleCollect (item) {
       try {
-        const res = await editImage(item.id, { collect: !item.is_collected })
+        const { id, is_collected } = item
+        const res = await editImage(id, { collect: !is_collected })
         item.is_collected = res.data.data.collect
         // console.log(res)
       } catch (err) {
@@ -145,7 +146,7 @@ export default {
       }
     },
     // 删除
-    async hDelImage (id) {
+    hDelImage (id, idx) {
       this.$confirm('你确定要永久删除这条记录吗, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -154,8 +155,11 @@ export default {
         try {
           await delImage(id)
           this.$message.success('删除成功')
-          // 删除成功，重新加载数据
-          this.loadImages()
+          // 删除成功，重新加载数据---更新视图
+          // 方法一：整个更新视图
+          // this.loadImages()
+          // 方法二：只更新当前的数据  在images中删除这一项。  找到这一项在当前数据项images中的位置（索引值），直接删除它。
+          this.images.splice(idx, 1)
         } catch (err) {
           this.$message.error('删除失败')
         }
@@ -201,6 +205,10 @@ export default {
 </script>
 
 <style scoped lang='less'>
+// 在组件内部带scoped的style中写 如果一定要写在组件内部，且加scoped，则可以这样： 在你要修改的类名之前加一个/deep/
+.image-container /deep/ .el-card__body {
+  padding: 30px;
+}
 .img_item {
     position: relative;
     box-sizing: border-box;

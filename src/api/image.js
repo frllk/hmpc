@@ -33,9 +33,7 @@ export const editImage = (id, data) => {
  * 删除文章
  * @param {*} id id
  */
-export const delImage = id => {
-  return ajax({
-    method: 'DELETE',
-    url: '/mp/v1_0/user/images/' + id
-  })
-}
+export const delImage = id => ajax({
+  method: 'DELETE',
+  url: '/mp/v1_0/user/images/' + id
+})
