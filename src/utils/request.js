@@ -16,8 +16,9 @@ const instance = axios.create({
     // 对 data 进行任意转换处理
     try {
       // 如果没有遇到错误，就返回 JSONbig处理之后的数据
-      return JSONbig.parse(data)
+      return JSONbig.parse(data || '{}')
     } catch (err) {
+      console.log(data)
       console.log('JSONbig转换出错', err)
       return data
     }
