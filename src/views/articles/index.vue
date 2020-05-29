@@ -116,7 +116,7 @@
 </template>
 
 <script>
-import { getArticles, delArticle, getChannels } from '../../api/artilce'
+import { getArticles, delArticle, getChannels } from '../../api/article'
 import MyBreadcrumb from '../../components/MyBreadcrumb'
 export default {
   name: 'ArticleIndex',

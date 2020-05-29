@@ -33,3 +33,14 @@ export const getChannels = () => {
     url: '/mp/v1_0/channels'
   })
 }
+/**
+ * 发布
+ * @param {*} article 参数
+ * @param {*} isDraft 是否草稿  true：草稿  false：直接发布
+ */
+export const addArticle = (article, isDraft = false) => ajax({
+  method: 'POST',
+  url: '/mp/v1_0/articles',
+  params: { draft: isDraft },
+  data: article
+})
