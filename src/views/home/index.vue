@@ -6,15 +6,19 @@
       <!-- 1、使用。在子组件使用v-model。与在普通表单元素上使用是一样的。 -->
       <my-channels-vmodel v-model="channel_id_vmodel" :isClearable="true"></my-channels-vmodel>
     </el-form>
+    <div class="my-cover">
+      <my-cover></my-cover>
+    </div>
   </div>
 </template>
 
 <script>
+import MyCover from '@/components/my-cover'
 import MyChannels from '@/components/MyChannels'
 import MyChannelsVmodel from '@/components/MyChannelsVmodel'
 export default {
   name: 'Home',
-  components: { MyChannels, MyChannelsVmodel },
+  components: { MyChannels, MyChannelsVmodel, MyCover },
   data () {
     return {
       channel_id: '',
