@@ -1,18 +1,26 @@
 <template>
-  <div class=''>Home</div>
+  <div class=''>
+    <el-form>
+      <my-channels @changeChannel="hChangeChannel" :isClearable="true"></my-channels>
+    </el-form>
+  </div>
 </template>
 
 <script>
+import MyChannels from '@/components/MyChannels'
 export default {
   name: 'Home',
-  props: { },
+  components: { MyChannels },
   data () {
-    return { }
+    return {
+      channel_id: ''
+    }
   },
-  methods: { },
-  computed: { },
-  created () { },
-  mounted () { }
+  methods: {
+    hChangeChannel (obj) {
+      this.channel_id = obj
+    }
+  }
 }
 </script>
 
