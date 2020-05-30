@@ -1,6 +1,6 @@
 <template>
   <!-- 由于它的根元素是el-form-item，则在使用这个组件时，要用el-form包起来 -->
-  <el-form-item prop="channel_id" label="频道">
+  <el-form-item :prop="prop" label="频道">
     <!-- clearable：表示可清空的单选 -->
     <!-- change 事件是由el-select组件提供的，当用户的选择发生变化时，它会触发，并传入当前用户选中的值 -->
     <el-select :clearable='isClearable' @change="hSlectChange" v-model="channel_id" placeholder="请选择频道">
@@ -16,7 +16,7 @@
 import { getChannels } from '@/api/article'
 export default {
   name: 'MyChannelsVmodel',
-  props: ['value', 'isClearable'], // 收集从v-model上传过来的父组件中定义数据项的值
+  props: ['value', 'isClearable', 'prop'], // 收集从v-model上传过来的父组件中定义数据项的值
   data () {
     return {
       channel_id: '', // 频道id

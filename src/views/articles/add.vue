@@ -19,11 +19,7 @@
             <el-radio :label="-1">自动</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="频道" prop="channel_id">
-          <el-select v-model="article.channel_id" placeholder="请选择频道">
-            <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
-          </el-select>
-        </el-form-item>
+        <my-channels v-model="article.channel_id" prop="channel_id"></my-channels>
         <el-form-item>
           <el-button type="primary" @click="onSubmit()">发布文章</el-button>
           <el-button @click="onSubmit(true)">存入草稿</el-button>
@@ -34,8 +30,9 @@
 </template>
 
 <script>
+import MyChannels from '@/components/MyChannelsVmodel'
 import MyBreadcrumb from '@/components/MyBreadcrumb'
-import { getChannels, addArticle } from '@/api/article'
+import { addArticle } from '@/api/article'
 // 导入样式 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
@@ -44,7 +41,7 @@ import { quillEditor } from 'vue-quill-editor'
 export default {
   name: 'AddArticle',
   props: { },
-  components: { MyBreadcrumb, quillEditor },
+  components: { MyBreadcrumb, quillEditor, MyChannels },
   data () {
     return {
       rules: {
@@ -89,15 +86,6 @@ export default {
     }
   },
   methods: {
-    async loadArticleChannels () {
-      try {
-        const res = await getChannels()
-        this.channels = res.data.data.channels
-      } catch (err) {
-        console.log(err)
-        this.$message.error('频道加载失败')
-      }
-    },
     // 发布文章
     async hAddArticle (isDraft = false) {
       try {
@@ -119,12 +107,7 @@ export default {
         }
       })
     }
-  },
-  computed: { },
-  created () {
-    this.loadArticleChannels()
-  },
-  mounted () { }
+  }
 }
 </script>
 

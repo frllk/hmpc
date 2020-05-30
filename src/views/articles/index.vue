@@ -21,12 +21,7 @@
             <el-radio :label="4">已删除</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="频道">
-          <el-select v-model="form.channel_id" clearable placeholder="请选择频道">
-            <el-option v-for="item in channels" :label="item.name" :value="item.id" :key="item.id"></el-option>
-            <!-- <el-option label="频道二" value="beijing"></el-option> -->
-          </el-select>
-        </el-form-item>
+        <my-channels v-model="form.channel_id" :isClearable="true"></my-channels>
         <el-form-item label="日期">
           <el-date-picker
             v-model="form.date"
@@ -116,7 +111,8 @@
 </template>
 
 <script>
-import { getArticles, delArticle, getChannels } from '../../api/article'
+import MyChannels from '@/components/MyChannelsVmodel'
+import { getArticles, delArticle } from '../../api/article'
 import MyBreadcrumb from '../../components/MyBreadcrumb'
 export default {
   name: 'ArticleIndex',
@@ -135,7 +131,7 @@ export default {
       loading: false
     }
   },
-  components: { MyBreadcrumb },
+  components: { MyBreadcrumb, MyChannels },
   methods: {
     hQuery () {
       this.loadArticles()
@@ -170,22 +166,6 @@ export default {
       //   this.articles = res.data.data.results
       //   this.total_count = res.data.data.total_count
       // }).catch(err => console.log(err))
-    },
-    async loadChannels () {
-      try {
-        const res = await getChannels()
-        // console.log(res.data.data.channels)
-        this.channels = res.data.data.channels
-      } catch (err) {
-        console.log(err)
-        this.$message.error('加载频道失败')
-      }
-      // getChannels().then(res => {
-      //   // console.log(res.data.data.channels)
-      //   this.channels = res.data.data.channels
-      // }).catch(err => {
-      //   console.log(err)
-      // })
     },
     hPageChange (currPage) {
       // console.log(currPage)
@@ -252,7 +232,6 @@ export default {
   computed: { },
   created () {
     this.loadArticles()
-    this.loadChannels()
   },
   mounted () { }
 }
