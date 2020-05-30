@@ -123,6 +123,7 @@ export default {
       }
     },
     hCollectChange () {
+      this.curr_page = 1
       // 切换状态，再次发送请求去获取数据
       this.loadImages()
     },

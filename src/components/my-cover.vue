@@ -14,16 +14,23 @@
         <el-tab-pane label="素材库" name="image">
           <!-- 全部 收藏 -->
           <div>
-            <el-radio-group @change="hCollectChange" v-model="collect" style="padding-bottom: 20px">
+            <el-radio-group @change="hCollectChange" v-model="collect"  size="mini" style="padding-bottom: 20px">
               <el-radio-button :label="false">全部</el-radio-button>
               <el-radio-button :label="true">收藏</el-radio-button>
             </el-radio-group>
           </div>
           <!-- 素材列表 -->
-          <el-row :gutter="10">
-            <el-col v-for="item in images" :key="item.id" class="img_item" :xs="12" :sm="6" :md="6" :lg="4">
+          <el-row :gutter="10" class="img_list">
+              <!-- 只有当前的image的url与selectedImageUrl相等时，才补充一个selected类
+                :class="{类名：值}"
+                当值为true就有这个类名，否则就没有
+              -->
+            <el-col v-for="item in images" :class="{selected: selectImageUrl === item.url}"
+            :key="item.id" class="img_item" :xs="12" :sm="6" :md="6" :lg="4">
+              <!-- style="height: 100px;"  -->
               <el-image
-                style="height: 180px;" :src="item.url"
+                @click.native="selectImageUrl = item.url"
+                :src="item.url"
                 fit="cover"
               ></el-image>
             </el-col>
@@ -57,10 +64,13 @@ export default {
       dialogVisible: false,
       // 当前tabs组件激活的选项卡的name属性的值
       activeName: 'image',
-      images: [],
-      per_page: 12,
-      curr_page: 1,
-      total_count: 0,
+      // 用它来记录当前用户选中的图片
+      // 当用户点击某张图片，则把被点击的图片地址保存在这里
+      selectImageUrl: '',
+      images: [], // 当前显示的图片列表
+      per_page: 12, // 每页显示条数
+      curr_page: 1, // 当前页码
+      total_count: 0, // 本次查询结果总数
       collect: false // 是否收藏  true：已收藏  false：全部
     }
   },
@@ -95,6 +105,10 @@ export default {
       this.curr_page = currPage
       this.loadImages()
     },
+    hSelectImage (image) {
+      console.log(image.url)
+      this.selectImageUrl = image.url
+    },
     openDialog () {
       // 打开对话框
       this.dialogVisible = true
@@ -106,6 +120,11 @@ export default {
 </script>
 
 <style scoped lang='less'>
+// 对话框 上下的空去掉
+/deep/ .el-dialog__body {
+  padding-bottom: 0px;
+  padding-top: 0;
+}
 // 图片按钮
 .btn_img {
   width: 150px;
@@ -115,6 +134,36 @@ export default {
     width: 100%;
     height: 100%;
     display: block;
+  }
+}
+.selected::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3) url(../assets/selected.png) no-repeat center / 50px 50px;
+}
+.el-image{
+  height: 120px;
+}
+// 素材列表
+.img_list{
+  .img_item{
+    // 鼠标的形状
+    cursor: pointer;
+    position: relative;
+    // width: 150px;
+    // height: 120px;
+    // border: 1px dashed #ddd;
+    // display: inline-block;
+    // margin-right: 15px;
+    // img {
+    //   width: 100%;
+    //   height: 100%;
+    //   display: block;
+    // }
   }
 }
 </style>
