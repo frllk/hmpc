@@ -195,7 +195,8 @@ export default {
     hEdit (row) {
       console.log(row)
       const id = row.id.toString()
-      this.$router.push('/editArticle/' + id)
+      // this.$router.push('/editArticle/' + id)
+      this.$router.push({ path: '/editArticle/' + id, query: { isDraft: row.status === 0 } })
     },
     async hDelete (row) {
       try {

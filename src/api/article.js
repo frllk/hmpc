@@ -44,3 +44,22 @@ export const addArticle = (article, isDraft = false) => ajax({
   params: { draft: isDraft },
   data: article
 })
+/**
+ * 编辑文章
+ * @param {*} article 参数
+ * @param {*} isDraft  是否草稿
+ */
+export const editArticle = (article, isDraft = false) => ajax({
+  method: 'PUT',
+  url: '/mp/v1_0/articles/' + article.id,
+  params: { draft: isDraft },
+  data: article
+})
+/**
+ * 获取指定文章
+ * @param {*} id 文章编号
+ */
+export const getArticle = id => ajax({
+  method: 'GET',
+  url: '/mp/v1_0/articles/' + id
+})
