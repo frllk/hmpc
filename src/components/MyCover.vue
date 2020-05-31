@@ -157,7 +157,7 @@ export default {
       // 重置
       this.activeName = 'image'
       this.imageUrl = ''
-      this.selectImageUrl = this.value || this.coverImageUrl
+      this.selectImageUrl = this.value || ''
       // 打开对话框
       this.dialogVisible = true
       // 发送请求，加载素材
@@ -191,7 +191,7 @@ export default {
           return
         } else {
           this.coverImageUrl = this.selectImageUrl
-          this.$emit('input', this.coverImageUrl)
+          this.$emit('input', this.selectImageUrl)
         }
       } else if (this.activeName === 'upload') {
         if (!this.imageUrl) {
@@ -199,7 +199,7 @@ export default {
           return
         } else {
           this.coverImageUrl = this.imageUrl
-          this.$emit('input', this.coverImageUrl)
+          this.$emit('input', this.imageUrl)
         }
       }
 

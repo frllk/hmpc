@@ -11,13 +11,20 @@
           <quill-editor v-model="article.content"  :options="editorOption"></quill-editor>
         </el-form-item>
         <el-form-item label="封面">
-          <el-radio-group v-model="article.cover.type">
+          <el-radio-group v-model="article.cover.type" @change="article.cover.images = []">
             <!-- 1:自动，0-无图，1-1张，3-3张 -->
             <el-radio :label="1">单图</el-radio>
             <el-radio :label="3">三图</el-radio>
             <el-radio :label="0">无图</el-radio>
             <el-radio :label="-1">自动</el-radio>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item v-if="article.cover.type > 0">
+          <el-row :gutter="10">
+            <el-col v-for="(item, idx) in article.cover.type" :key="idx" :xs="8" :sm="6" :md="6" :lg="4">
+              {{idx}}<my-cover v-model="article.cover.images[idx]"></my-cover>
+            </el-col>
+          </el-row>
         </el-form-item>
         <my-channels v-model="article.channel_id" prop="channel_id"></my-channels>
         <el-form-item>
@@ -30,6 +37,7 @@
 </template>
 
 <script>
+import MyCover from '@/components/MyCover'
 import MyChannels from '@/components/MyChannelsVmodel'
 import MyBreadcrumb from '@/components/MyBreadcrumb'
 import { addArticle } from '@/api/article'
@@ -41,7 +49,7 @@ import { quillEditor } from 'vue-quill-editor'
 export default {
   name: 'AddArticle',
   props: { },
-  components: { MyBreadcrumb, quillEditor, MyChannels },
+  components: { MyBreadcrumb, quillEditor, MyChannels, MyCover },
   data () {
     return {
       rules: {
