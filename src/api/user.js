@@ -24,3 +24,29 @@ export const getUserProfile = () => {
   })
   return result
 }
+
+/**
+ * 编辑用户
+ * name 用户名
+ * intro 头条号简介
+ * email 邮箱
+ * @param {*} user 编辑用户修改资料
+ */
+export const modUserProfile = (user) => {
+  return ajax({
+    method: 'PATCH',
+    url: '/mp/v1_0/user/profile',
+    data: user
+  })
+}
+/**
+ * 修改用户头像
+ * @param {*} photo 头像图片
+ */
+export const modUserPhoto = (photo) => {
+  return ajax({
+    method: 'PATCH',
+    url: '/mp/v1_0/user/photo',
+    data: { photo }
+  })
+}
