@@ -41,7 +41,7 @@
 <script>
 import echarts from 'echarts'
 import MyBreadcrumb from '@/components/MyBreadcrumb'
-import { getFollowers } from '@/api/fans'
+import { getFollowers, getStatistics } from '@/api/fans'
 export default {
   name: 'MyFans',
   components: {
@@ -80,17 +80,28 @@ export default {
     // echarts绘图 粉丝画像
     async draw () {
       try {
+        // 使用真实数据
+        const res = await getStatistics()
+        // console.log(res.data.data)
+        const ages = res.data.data.age
+        const ageX = []
+        const ageY = []
+        for (const key in ages) {
+          ageX.push(key.replace('le', '小于').replace('gt', '大于'))
+          ageY.push(ages[key])
+        }
+        console.log(ageX, ageY)
         const echartsObj = echarts.init(this.$refs.main)
         const option = {
           xAxis: {
             type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            data: ageX
           },
           yAxis: {
             type: 'value'
           },
           series: [{
-            data: [120, 200, 150, 80, 70, 110, 130],
+            data: ageY,
             type: 'bar',
             showBackground: true,
             backgroundStyle: {

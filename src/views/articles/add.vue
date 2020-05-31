@@ -22,7 +22,7 @@
         <el-form-item v-if="article.cover.type > 0">
           <el-row :gutter="10">
             <el-col v-for="(item, idx) in article.cover.type" :key="idx" :xs="8" :sm="6" :md="6" :lg="4">
-              {{idx}}<my-cover v-model="article.cover.images[idx]"></my-cover>
+              <my-cover v-model="article.cover.images[idx]"></my-cover>
             </el-col>
           </el-row>
         </el-form-item>
