@@ -6,14 +6,14 @@
       </div>
 
       <!-- tabs组件 -->
-      <el-tabs v-model="activeName" type="card">
+      <el-tabs @tab-click='hTabClick' v-model="activeName" type="card">
 
         <el-tab-pane label="粉丝列表" name="list">
           <!-- 列表 -->
           <div class="fans_list">
-            <div class="fans_item">
-              <el-avatar :size="80" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"></el-avatar>
-              <p>item.name</p>
+            <div v-for="(item, idx) in list" :key="idx" class="fans_item">
+              <el-avatar :size="80" :src="item.photo"></el-avatar>
+              <p>{{item.name}}</p>
               <el-button type="primary" plain size="small">+关注</el-button>
             </div>
           </div>
@@ -39,8 +39,9 @@
 </template>
 
 <script>
+import echarts from 'echarts'
 import MyBreadcrumb from '@/components/MyBreadcrumb'
-
+import { getFollowers } from '@/api/fans'
 export default {
   name: 'MyFans',
   components: {
@@ -59,9 +60,58 @@ export default {
     }
   },
   methods: {
-    changePage () {
-
+    // 获取粉丝列表
+    async loadFollowers () {
+      try {
+        const result = await getFollowers(this.page, this.per_page)
+        // console.log(result.data.data)
+        this.list = result.data.data.results
+        this.total = result.data.data.total_count
+      } catch (err) {
+        console.log(err)
+        this.$message.error('获取粉丝列表失败')
+      }
+    },
+    // 翻页
+    changePage (currPage) {
+      this.page = currPage
+      this.loadFollowers()
+    },
+    // echarts绘图 粉丝画像
+    async draw () {
+      try {
+        const echartsObj = echarts.init(this.$refs.main)
+        const option = {
+          xAxis: {
+            type: 'category',
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: [{
+            data: [120, 200, 150, 80, 70, 110, 130],
+            type: 'bar',
+            showBackground: true,
+            backgroundStyle: {
+              color: 'rgba(220, 220, 220, 0.8)'
+            }
+          }]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        echartsObj.setOption(option)
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    // tab点击事件
+    hTabClick () {
+      console.log(this.activeName)
+      this.draw()
     }
+  },
+  created () {
+    this.loadFollowers()
   }
 }
 </script>
