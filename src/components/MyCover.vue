@@ -2,7 +2,7 @@
   <div class="my-cover">
     <!-- 图片按钮 -->
     <div class="btn_img" @click="openDialog()">
-      <img src="../assets/default.png" />
+      <img :src="value || coverImageUrl" />
     </div>
     <!-- 对话框 -->
     <el-dialog
@@ -43,23 +43,63 @@
           :total_count='total_count'></my-pagination>
           <!-- 分页 -->
         </el-tab-pane>
-        <el-tab-pane label="上传图片" name="upload">上传图片内容</el-tab-pane>
+        <el-tab-pane label="上传图片" name="upload">
+          <!--
+          上传图片
+          action：上传地址
+          headers：请求头
+          show-file-list：false 不需要显示已上传的文件列表
+          on-success：上传成功之后的回调函数
+          before-upload 上传之前对文件进行检查
+          name：设置上传的文件参数名，要与后端接口的要求一致
+          -->
+          <el-upload
+            class="avatar-uploader"
+            action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
+            :headers="headers"
+            name="image"
+            :show-file-list="false"
+            :on-success="hUploadSuccess"
+            :before-upload="beforeAvatarUpload">
+            <!-- 如果当前有预览地址就说么图片上传成功了
+            目标：当我上传成功之后，后端会返回这张图在服务器上的地址；给用户展示这张
+            图，当用户成功地看到这张图时，关闭整个上传对话框。
+
+            给用户展示这张图，用户成功看到这张图时，关闭整个上传对话框。
+            图片的load事件：
+              - 当你设置图片的src时，浏览器会去请求图片的资源，当图片请求回来之后，
+                会有一个事件触发，这个事件就是load
+            -->
+            <el-image v-if="imageUrl" :src="imageUrl" class="avatar"></el-image>
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="hConfirmImage">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { getUser } from '@/utils/storage.js'
+import defaultImg from '@/assets/default.png'
 import MyPagination from '@/components/MyPagination'
 import { getImages } from '@/api/image.js'
 export default {
   name: 'MyCover',
   data () {
     return {
+      // 由于这里的上传不是走的axios，而处理上传的接口又需要token
+      // 所以这里只能手动添加token
+      headers: {
+        Authorization: `Bearer ${getUser().token}`
+      },
+      imageUrl: '',
+      // 封面图
+      coverImageUrl: defaultImg,
       // 控制对话框显示隐藏
       dialogVisible: false,
       // 当前tabs组件激活的选项卡的name属性的值
@@ -74,6 +114,8 @@ export default {
       collect: false // 是否收藏  true：已收藏  false：全部
     }
   },
+  // value用来接收从父组件中传入的值
+  props: ['value'],
   components: { MyPagination },
   methods: {
     // 加载素材
@@ -105,15 +147,63 @@ export default {
       this.curr_page = currPage
       this.loadImages()
     },
+    // 选择素材库的图片
     hSelectImage (image) {
       console.log(image.url)
       this.selectImageUrl = image.url
     },
+    // 打开弹框
     openDialog () {
+      // 重置
+      this.activeName = 'image'
+      this.imageUrl = ''
+      this.selectImageUrl = this.value || this.coverImageUrl
       // 打开对话框
       this.dialogVisible = true
       // 发送请求，加载素材
       this.loadImages()
+    },
+    // 如果上传成功，则会把响应结果至今传给这个res
+    hUploadSuccess (res) {
+      // console.log(res)
+      this.imageUrl = res.data.url
+      this.$message.success('上传素材成功')
+      this.loadImages()
+    },
+    // 上传之前对文件进行检查
+    beforeAvatarUpload (file) {
+      const isJPG = file.type === 'image/jpeg' || 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
+    },
+    // 确定
+    hConfirmImage () {
+      if (this.activeName === 'image') {
+        if (!this.selectImageUrl) {
+          this.$message.warning('请先选中一张图片')
+          return
+        } else {
+          this.coverImageUrl = this.selectImageUrl
+          this.$emit('input', this.coverImageUrl)
+        }
+      } else if (this.activeName === 'upload') {
+        if (!this.imageUrl) {
+          this.$message.warning('请先选中一张图片')
+          return
+        } else {
+          this.coverImageUrl = this.imageUrl
+          this.$emit('input', this.coverImageUrl)
+        }
+      }
+
+      this.dialogVisible = false
     }
   }
 }
@@ -165,5 +255,30 @@ export default {
     //   display: block;
     // }
   }
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+}
+.avatar-uploader {
+    text-align: center;
+}
+.avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+}
+
+// /deep/：称为它具有穿透功能：把选择器的能力从父组件中穿透到子组件中
+.avatar-uploader /deep/ .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
 </style>

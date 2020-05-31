@@ -7,13 +7,13 @@
       <my-channels-vmodel v-model="channel_id_vmodel" :isClearable="true"></my-channels-vmodel>
     </el-form>
     <div class="my-cover">
-      <my-cover></my-cover>
+      <my-cover v-model="imgSrc"></my-cover>
     </div>
   </div>
 </template>
 
 <script>
-import MyCover from '@/components/my-cover'
+import MyCover from '@/components/MyCover'
 import MyChannels from '@/components/MyChannels'
 import MyChannelsVmodel from '@/components/MyChannelsVmodel'
 export default {
@@ -21,6 +21,7 @@ export default {
   components: { MyChannels, MyChannelsVmodel, MyCover },
   data () {
     return {
+      imgSrc: 'http://toutiao.meiduo.site/Fr5_LUcBzK1DUm_qn-6JFIg12c1a',
       channel_id: '',
       channel_id_vmodel: 10
     }
