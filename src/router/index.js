@@ -1,17 +1,17 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Login from '../views/login/index.vue'
-import Layout from '../views/layout/index.vue'
 import { getUser } from '../utils/storage.js'
-import Home from '../views/home/index.vue'
-import NotFound from '../views/page404/index.vue'
-import Articles from '../views/articles/index.vue'
-import AddArticle from '../views/articles/add.vue'
-import EditArticle from '../views/articles/edit.vue'
-import Images from '../views/Image/index.vue'
-import Comments from '../views/comment/index.vue'
-import Fans from '../views/fans/index.vue'
-import Settings from '../views/settings/index.vue'
+const Login = () => import('../views/login/index.vue')
+const Layout = () => import('../views/layout/index.vue')
+const Home = () => import('../views/home/index.vue')
+const NotFound = () => import('../views/page404/index.vue')
+const Articles = () => import('../views/articles/index.vue')
+const AddArticle = () => import('../views/articles/add.vue')
+const EditArticle = () => import('../views/articles/edit.vue')
+const Images = () => import('../views/Image/index.vue')
+const Comments = () => import('../views/comment/index.vue')
+const Fans = () => import('../views/fans/index.vue')
+const Settings = () => import('../views/settings/index.vue')
 
 Vue.use(VueRouter)
 
