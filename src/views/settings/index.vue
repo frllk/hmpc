@@ -5,18 +5,14 @@
       <el-row :gutter="6">
         <!-- <el-col :span="12" :xs="12" :sm="6" :md="6" :lg="4"> -->
         <el-col :span="12">
-          <el-form ref="form" :model="user" label-width="80px">
-            <el-form-item label="编号">
-              {{user.id}}
-            </el-form-item>
-            <el-form-item label="手机">
-              {{user.mobile}}
-            </el-form-item>
+          <el-form label-width="120px">
+            <el-form-item label="编号">{{user.id}}</el-form-item>
+            <el-form-item label="手机">{{user.mobile}}</el-form-item>
             <el-form-item label="媒体名称">
               <el-input v-model="user.name"></el-input>
             </el-form-item>
             <el-form-item label="媒体简介">
-              <el-input type="textarea" v-model="user.intro"></el-input>
+              <el-input type="textarea" :rows="3" v-model="user.intro"></el-input>
             </el-form-item>
             <el-form-item label="联系邮箱">
               <el-input v-model="user.email"></el-input>
@@ -27,16 +23,21 @@
           </el-form>
         </el-col>
         <el-col :span="12">
-          <el-row>
-            <el-col :push="10">
-              <my-cover @input="hSavePhoto" v-model="user.photo"></my-cover>
-            </el-col>
-          </el-row>
-          <el-row style="margin-top:10px">
-            <el-col style="text-align:center">
-              修改头像
-            </el-col>
-          </el-row>
+          <!-- 上传组件 action必须属性
+          http-request 覆盖默认的上传行为，可以自定义上传的实现 function
+          在修改用户头像这个功能中，后端的接口是patch方式，而el-upload默认
+          只支持post方式上传，所以这里我们要启用el-upload的自定义上传属性：
+          http-request，它会覆盖默认的上传方式
+          -->
+          <el-upload
+            class="avatar-uploader"
+            action=""
+            :http-request="hSavePhoto"
+            :show-file-list="false">
+            <img v-if="user.photo" :src="user.photo" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+          <p class="edit-photo">修改头像</p>
         </el-col>
       </el-row>
     </el-card>
@@ -46,20 +47,16 @@
 <script>
 import { getUserProfile, modUserProfile, modUserPhoto } from '@/api/user'
 import MyBreadcrumb from '@/components/MyBreadcrumb'
-import MyCover from '@/components/MyCover'
 export default {
   name: 'Settings',
   props: [],
-  components: { MyBreadcrumb, MyCover },
+  components: { MyBreadcrumb },
   data () {
     return {
       user: {
-        id: 0,
         name: '',
         intro: '',
-        photo: '',
-        email: '',
-        mobile: ''
+        email: ''
       }
     }
   },
@@ -77,7 +74,8 @@ export default {
     // 修改用户资料
     async hSaveUser () {
       try {
-        const res = await modUserProfile(this.user)
+        const { name, intro, email } = this.user
+        const res = await modUserProfile({ name, intro, email })
         console.log(res)
         this.$message.success('修改成功')
       } catch (err) {
@@ -85,12 +83,15 @@ export default {
         this.$message.error('修改失败')
       }
     },
-    // 更新用户头像
-    async hSavePhoto () {
-      console.log('hSavePhoto')
+    // 更新用户头像 这个事件会自动传入一个对象，用来表示当前要上传的信息
+    async hSavePhoto (obj) {
+      // console.log(obj)
       try {
-        const res = await modUserPhoto(this.user.photo)
-        console.log(res)
+        const formData = new FormData()
+        formData.append('photo', obj.file)
+        const res = await modUserPhoto(formData)
+        this.$message.success('修改用户头像成功')
+        this.user.photo = res.data.data.photo
       } catch (err) {
         console.log(err)
         this.$message.error('更新头像失败')
@@ -105,4 +106,37 @@ export default {
 }
 </script>
 
-<style scoped lang='less'></style>
+<style scoped lang='less'>
+.edit-photo{
+  font-size: 12px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+}
+.avatar-uploader {
+    text-align: center;
+}
+.avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+}
+// 覆盖或者修改第三方组件自带的样式：方法二
+.image-container /deep/ .el-card__body {
+  padding: 30px;
+}
+// /deep/：称为它具有穿透功能：把选择器的能力从父组件中穿透到子组件中
+.avatar-uploader /deep/ .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+</style>

@@ -41,12 +41,12 @@ export const modUserProfile = (user) => {
 }
 /**
  * 修改用户头像
- * @param {*} photo 头像图片
+ * @param {*} formDataObj 头像图片
  */
-export const modUserPhoto = (photo) => {
+export const modUserPhoto = formDataObj => {
   return ajax({
     method: 'PATCH',
     url: '/mp/v1_0/user/photo',
-    data: { photo }
+    data: formDataObj
   })
 }
