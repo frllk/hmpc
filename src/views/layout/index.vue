@@ -115,6 +115,14 @@ export default {
   computed: { },
   created () {
     this.setUserProfile()
+    // 监听修改用户名事件
+    this.$eventBus.$on('updateUserName', newName => {
+      this.user.name = newName
+    })
+    // 监听修改用户头像事件
+    this.$eventBus.$on('updateUserPhoto', newPhoto => {
+      this.user.photo = newPhoto
+    })
   },
   mounted () { }
 }

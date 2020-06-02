@@ -75,9 +75,11 @@ export default {
     async hSaveUser () {
       try {
         const { name, intro, email } = this.user
-        const res = await modUserProfile({ name, intro, email })
-        console.log(res)
+        await modUserProfile({ name, intro, email })
+        // console.log(res)
         this.$message.success('修改成功')
+        // 发布同步用户名事件
+        this.$eventBus.$emit('updateUserName', name)
       } catch (err) {
         console.log(err)
         this.$message.error('修改失败')
@@ -92,6 +94,8 @@ export default {
         const res = await modUserPhoto(formData)
         this.$message.success('修改用户头像成功')
         this.user.photo = res.data.data.photo
+        // 发布同步用户头像事件
+        this.$eventBus.$emit('updateUserPhoto', this.user.photo)
       } catch (err) {
         console.log(err)
         this.$message.error('更新头像失败')
