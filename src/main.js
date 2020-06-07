@@ -3,6 +3,8 @@ import App from './App.vue'
 // 引入ElementUI和样式
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+// 引入vuex
+import store from '@/store/index.js'
 
 // 脚手架工具自动创建的路由配置文件
 // 由于目录下有一个名为index.js 则可以简写：省略index.js
@@ -23,6 +25,7 @@ Vue.config.productionTip = false
 Vue.prototype.$eventBus = new Vue()
 
 new Vue({
+  store,
   router,
   render: h => h(App)
 }).$mount('#app')

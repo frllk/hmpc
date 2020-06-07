@@ -91,6 +91,7 @@ export default {
     setUserProfile () {
       getUserProfile().then(res => {
         this.user = res.data.data
+        this.$store.commit('setUser', res.data.data)
       }).catch(err => {
         console.dir(err)
         // 401 UNAUTHORIZED 未授权

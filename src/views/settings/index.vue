@@ -78,8 +78,10 @@ export default {
         await modUserProfile({ name, intro, email })
         // console.log(res)
         this.$message.success('修改成功')
-        // 发布同步用户名事件
-        this.$eventBus.$emit('updateUserName', name)
+        // // 事件总线方式处理非父子组件之间的通信：发布同步用户名事件
+        // this.$eventBus.$emit('updateUserName', name)
+        // vuex方式处理非父子组件之间的数据共享
+        this.$store.commit('updateUsername', name)
       } catch (err) {
         console.log(err)
         this.$message.error('修改失败')
@@ -94,8 +96,10 @@ export default {
         const res = await modUserPhoto(formData)
         this.$message.success('修改用户头像成功')
         this.user.photo = res.data.data.photo
-        // 发布同步用户头像事件
-        this.$eventBus.$emit('updateUserPhoto', this.user.photo)
+        // 事件总线方式处理非父子组件之间的通信：发布同步用户头像事件
+        // this.$eventBus.$emit('updateUserPhoto', this.user.photo)
+        // vuex方式处理非父子组件之间的数据共享
+        this.$store.commit('updateUserphoto', this.user.photo)
       } catch (err) {
         console.log(err)
         this.$message.error('更新头像失败')
